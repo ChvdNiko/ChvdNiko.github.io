@@ -1,13 +1,89 @@
 body {
-  font-family: Arial, sans-serif;
-  margin: 20px;
-  background-color: #f4f4f4;
+  margin: 0;
+  background-color: black;
+  overflow: hidden;
+  color: white;
+  font-family: "minecraftia", cursive;
+  font-size: 14px;
 }
 
-h1 {
-  color: #333;
+.desktop {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
 }
 
-p {
-  color: #666;
+.app {
+  position: absolute;
+  width: 80px;
+  text-align: center;
+  cursor: move;
+  user-select: none;
+  transition: border-color 0.2s;
+  border: 2px solid transparent;
+}
+
+.app:hover {
+}
+
+.app img {
+  width: 50px;
+  height: 50px;
+  margin-bottom: 5px;
+}
+
+.app:hover {
+  border-color: purple;
+}
+
+.app img:hover {
+  border-color: transparent;
+}
+
+.taskbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  background-color: black;
+  overflow-x: auto;
+  border: 3px solid purple;
+}
+
+.taskbar-app {
+  margin: 0 3px;
+  cursor: pointer;
+  color: white;
+  padding: 12px;
+  background-color: black;
+
+  border: 4px solid purple;
+}
+
+.window-controls {
+  display: flex;
+  gap: 5px;
+}
+
+.window-controls button {
+  background-color: purple;
+  color: black;
+  border: none;
+  border-radius: 0px;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  font-size: 23px;
+}
+
+.window-controls button:hover {
+  background-color: darkgray;
 }

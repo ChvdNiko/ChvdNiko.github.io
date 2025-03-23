@@ -3,11 +3,26 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Hello world!</title>
+    <title>World machine</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <h1>I will finish this later maybe</h1>
-    <p>more text or something</p>
+    <div class="desktop">
+      <div class="app" id="music" draggable="true" ondragstart="drag(event)">
+        <img src="./images/img.jpg" alt="Test1 Icon" draggable="false" />
+        <span>Music Box</span>
+      </div>
+      <div class="app" id="notepad" draggable="true" ondragstart="drag(event)">
+        <img src="./images/image.jpg" alt="Test2 Icon" draggable="false" />
+        <span>Note</span>
+      </div>
+      <div class="app" id="test" draggable="true" ondragstart="drag(event)">
+        <img src="images/image.jpg" alt="Test3 Icon" draggable="false" />
+        <span>doesn't do shit yet</span>
+      </div>
+    </div>
+
+    <script src="index.js"></script>
   </body>
+  <link href="https://fonts.cdnfonts.com/css/minecraftia" rel="stylesheet" />
 </html>
