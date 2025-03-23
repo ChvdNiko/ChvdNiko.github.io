@@ -6,7 +6,24 @@ const gridSize = 110;
 const padding = 10;
 const gridWidth = 10;
 const gridHeight = 10;
-const grid = Array.from({ length: gridHeight }, () => Array(gridWidth).fill(null));
+
+let songs = [{
+        title: "My Burden Is Light",
+        file: "./music/My Burden Is Light.mp3"
+    },
+    {
+        title: "On Little Cat Feet",
+        file: "./music/On Little Cat Feet.mp3"
+    },
+    {
+        title: "Song Three",
+        file: "./music/song_three.mp3"
+    }
+]
+
+const grid = Array.from({
+    length: gridHeight
+}, () => Array(gridWidth).fill(null));
 
 document.querySelectorAll('.app').forEach(app => {
     app.addEventListener('dragstart', drag);
@@ -44,7 +61,10 @@ document.addEventListener('drop', (event) => {
     } else {
         const newPosition = findNextAvailableCell();
         if (newPosition) {
-            const { x, y } = newPosition;
+            const {
+                x,
+                y
+            } = newPosition;
             grid[y][x] = appId;
             appElement.style.left = `${x * gridSize}px`;
             appElement.style.top = `${y * gridSize}px`;
@@ -62,7 +82,10 @@ function findAppPosition(appId) {
     for (let y = 0; y < gridHeight; y++) {
         for (let x = 0; x < gridWidth; x++) {
             if (grid[y][x] === appId) {
-                return { x, y };
+                return {
+                    x,
+                    y
+                };
             }
         }
     }
@@ -73,7 +96,10 @@ function findNextAvailableCell() {
     for (let y = 0; y < gridHeight; y++) {
         for (let x = 0; x < gridWidth; x++) {
             if (grid[y][x] === null) {
-                return { x, y };
+                return {
+                    x,
+                    y
+                };
             }
         }
     }
@@ -107,7 +133,7 @@ let taskbar = document.createElement('div');
 taskbar.className = 'taskbar';
 document.body.appendChild(taskbar);
 
-function createWindow(title, width, height, contentHtml) {
+function createWindow(title, width, height, contentHtml, contentJS) {
     const windowElement = document.createElement('div');
     windowElement.className = 'window';
     windowElement.style.width = `${width}px`;
@@ -136,7 +162,7 @@ function createWindow(title, width, height, contentHtml) {
         const appId = "window-" + title.replace(/\s+/g, '').toLowerCase();
         const appElement = document.getElementById(appId);
         if (appElement) {
-            appElement.remove(); 
+            appElement.remove();
         }
     };
 
@@ -171,6 +197,8 @@ function createWindow(title, width, height, contentHtml) {
     content.style.padding = '10px';
     content.style.height = `calc(${height}px - 40px)`;
 
+
+
     let isDragging = false;
     let offsetX, offsetY;
 
@@ -198,12 +226,71 @@ function createWindow(title, width, height, contentHtml) {
 
 positionAppsVertically();
 
+let currentSongIndex = 0;
+let audio = new Audio(songs[currentSongIndex].file);
+let isPlaying = false;
+
+
 const applications = {
     music: {
         title: 'Music Box',
-        width: 500,
-        height: 400,
-        content: '<p>UNDER CONSTRUCTION.</p>'
+        width: 700,
+        height: 500,
+
+        content: `
+    <style>
+        #current-song {
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        #lightbulb-image {
+            height: auto;
+            width: 50px;
+        }
+
+        #niko-image {
+            height: 100px;
+            width: 100px;
+            object-fit: cover;
+        }
+
+        #player-image {
+            height: 150px;
+            width: 150px;
+            object-fit: cover;
+        }
+
+        #speed-slider, #volume-slider {
+            width: 200px;
+            margin: 10px;
+        }
+        #progress-bar {
+            width: 100%;
+            margin: 10px 0;
+        }
+        .image-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+    </style>
+    <div class="image-container">
+        <img src="./images/lightbulb.png" alt="Lightbulb" id="lightbulb-image"/>
+        <img src="./images/stopped.gif" id="play-status" alt="Player" id="player-image" />
+        <img src="./images/sleeping.gif" id="activity-status" alt="Niko" id="niko-image" />
+    </div>
+    <p>Currently Playing: <span id="current-song"></span></p>
+    <button id="prev-song">Previous Song</button>
+    <button id="next-song">Next Song</button>
+    <div>
+        <input type="range" id="speed-slider" min="0.5" max="2" step="0.1" value="1" />
+        <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="1" />
+    </div>
+    <button id="stop-song">Stop</button>
+    <button id="play-pause-song">Play</button>
+    <progress id="progress-bar" value="0" max="100"></progress>`
     },
     notepad: {
         title: 'Notepad',
@@ -213,10 +300,73 @@ const applications = {
     }
 };
 
+function initializeMusicPlayer() {
+    const musicContainer = document.createElement('div');
+    musicContainer.innerHTML = applications.music.contentHtml;
+    document.body.appendChild(musicContainer);
+
+    setupEventListeners();
+    updateSong();
+}
+
+function updateSong() {
+    document.getElementById('current-song').innerText = songs[currentSongIndex].title;
+    audio.src = songs[currentSongIndex].file;
+}
+
+function setupEventListeners() {
+    document.getElementById('play-pause-song').addEventListener('click', () => {
+        if (isPlaying) {
+            audio.pause();
+            document.getElementById('play-status').src = './images/stopped.gif';
+            document.getElementById('activity-status').src = './images/sleeping.gif';
+
+        } else {
+            audio.play();
+            document.getElementById('play-status').src = './images/playing.gif';
+            document.getElementById('activity-status').src = './images/dance.gif';
+        }
+        isPlaying = !isPlaying;
+    });
+
+    document.getElementById('stop-song').addEventListener('click', () => {
+        audio.pause();
+        audio.currentTime = 0;
+        isPlaying = false;
+        document.getElementById('play-status').src = './images/stopped.gif';
+        document.getElementById('activity-status').src = './images/sleeping.gif';
+    });
+
+    document.getElementById('prev-song').addEventListener('click', () => {
+        currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+        updateSong();
+        if (isPlaying) audio.play();
+    });
+
+    document.getElementById('next-song').addEventListener('click', () => {
+        currentSongIndex = (currentSongIndex + 1) % songs.length;
+        updateSong();
+        if (isPlaying) audio.play();
+    });
+
+    document.getElementById('speed-slider').addEventListener('input', (event) => {
+        audio.playbackRate = event.target.value;
+    });
+
+    document.getElementById('volume-slider').addEventListener('input', (event) => {
+        audio.volume = event.target.value;
+    });
+
+    audio.addEventListener('timeupdate', () => {
+        const progressBar = document.getElementById('progress-bar');
+        progressBar.value = (audio.currentTime / audio.duration) * 100;
+    });
+}
+
 function openApplication(appKey) {
     const app = applications[appKey];
     if (app) {
-        createWindow(app.title, app.width, app.height, app.content);
+        createWindow(app.title, app.width, app.height, app.content, app.contentJS);
     } else {
         console.error('Application not found:', appKey);
     }
@@ -225,7 +375,7 @@ function openApplication(appKey) {
 document.querySelectorAll('.app').forEach(app => {
     app.addEventListener('dblclick', () => {
         const appId = app.id.toLowerCase();
-        openApplication(appId) 
+        openApplication(appId)
+        if (appId == "music") initializeMusicPlayer();
     });
 });
-
