@@ -297,6 +297,20 @@ const applications = {
         width: 500,
         height: 200,
         content: `<p>Hi, this place will probably work out as a sandbox of some sort where I put cool things and shit.<br><br>This is influenced by OneShot: world machine edition if that matters.</p>`
+    },
+
+    shark: {
+        title: 'Bombardiro crocodilo',
+        width: 320,
+        height: 240,
+        content: `
+    <div style="text-align: center;">
+      <video autoplay loop style="max-width:300px;max-height:250px;">
+        <source src="./videos/bombardiro.webm" type="video/webm">
+        Your browser does not support the video tag.
+      </video>
+    </div>
+`
     }
 };
 
