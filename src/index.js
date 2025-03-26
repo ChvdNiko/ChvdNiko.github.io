@@ -232,21 +232,25 @@ let isPlaying = false;
 
 
 const applications = {
-    music: {
-        title: 'Music Box',
-        width: 700,
-        height: 500,
+    
+music: {
+    title: 'Music Box',
+    width: 700,
+    height: 500,
 
-        content: `
+    content: `
     <style>
         #current-song {
             font-weight: bold;
             margin: 10px 0;
+            text-align: center;
+            border:2px solid purple;
         }
 
         #lightbulb-image {
             height: auto;
             width: 50px;
+            margin:0px 20px;
         }
 
         #niko-image {
@@ -263,17 +267,50 @@ const applications = {
 
         #speed-slider, #volume-slider {
             width: 200px;
-            margin: 10px;
+            margin: 10px auto;
+            display: block;
+            background-color: purple;
         }
+
         #progress-bar {
             width: 100%;
             margin: 10px 0;
         }
+
         .image-container {
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 20px;
+        }
+
+        .button-container {
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        button {
+            margin: 0 5px;
+            background-color: black;
+            color: white;
+            border: 2px solid purple;
+            cursor: pointer;
+        }
+
+        .song-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 10px 0;
+        }
+
+        .song-controls button {
+            margin: 0 10px;
+        }
+
+        .slider-label {
+            text-align: center;
+            margin: 5px 0;
         }
     </style>
     <div class="image-container">
@@ -281,17 +318,23 @@ const applications = {
         <img src="./images/stopped.gif" id="play-status" alt="Player" id="player-image" />
         <img src="./images/sleeping.gif" id="activity-status" alt="Niko" id="niko-image" />
     </div>
-    <p>Currently Playing: <span id="current-song"></span></p>
-    <button id="prev-song">Previous Song</button>
-    <button id="next-song">Next Song</button>
+    <div class="song-controls">
+        <button id="prev-song">&lt;</button>
+        <p id="current-song">Currently Playing: <span></span></p>
+        <button id="next-song">&gt;</button>
+    </div>
     <div>
+        <div class="slider-label">Playback speed</div>
         <input type="range" id="speed-slider" min="0.5" max="2" step="0.1" value="1" />
+        <div class="slider-label">Volume</div>
         <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="1" />
     </div>
-    <button id="stop-song">Stop</button>
-    <button id="play-pause-song">Play</button>
+    <div class="button-container">
+        <button id="stop-song">Stop</button>
+        <button id="play-pause-song">Play</button>
+    </div>
     <progress id="progress-bar" value="0" max="100"></progress>`
-    },
+},
     notepad: {
         title: 'Notepad',
         width: 500,
@@ -311,8 +354,80 @@ const applications = {
       </video>
     </div>
 `
+    },
+ calculator: {
+        title: 'Calculator',
+        width: 300,
+        height: 405,
+        content: `
+        <style>
+            #calculator-display {
+                width: 100%;
+                height: 50px;
+                font-size: 24px;
+                background-color:black;
+                color:purple;
+                text-align: right;
+                padding: 10px;
+                box-sizing: border-box;
+                border: 2px solid purple;
+            }
+            .button {
+                width: 25%;
+                height: 60px;
+                font-size: 20px;
+                background-color:black;
+                color:white;
+                border:1px solid purple;
+                cursor: pointer;
+            }
+            .button-container {
+                display: flex;
+                flex-wrap: wrap;
+            }
+        </style>
+        <input type="text" id="calculator-display" disabled />
+        <div class="button-container">
+            <button class="button" onclick="appendToDisplay('7')">7</button>
+            <button class="button" onclick="appendToDisplay('8')">8</button>
+            <button class="button" onclick="appendToDisplay('9')">9</button>
+            <button class="button" onclick="appendToDisplay('/')">/</button>
+            <button class="button" onclick="appendToDisplay('4')">4</button>
+            <button class="button" onclick="appendToDisplay('5')">5</button>
+            <button class="button" onclick="appendToDisplay('6')">6</button>
+            <button class="button" onclick="appendToDisplay('*')">*</button>
+            <button class="button" onclick="appendToDisplay('1')">1</button>
+            <button class="button" onclick="appendToDisplay('2')">2</button>
+            <button class="button" onclick="appendToDisplay('3')">3</button>
+            <button class="button" onclick="calculateResult()">=</button>
+            <button class="button" onclick="appendToDisplay('.')">.</button>
+            <button class="button" onclick="appendToDisplay('0')">0</button>
+            <button class="button" onclick="appendToDisplay('+')">+</button>
+            <button class="button" onclick="appendToDisplay('-')">-</button>
+            <button class="button" onclick="clearDisplay()">C</button>
+        </div>
+        `,
     }
 };
+
+function appendToDisplay(value) {
+    const display = document.getElementById('calculator-display');
+    display.value += value;
+}
+
+function calculateResult() {
+    const display = document.getElementById('calculator-display');
+    try {
+        display.value = eval(display.value);
+    } catch (error) {
+        display.value = 'Error';
+    }
+}
+
+function clearDisplay() {
+    const display = document.getElementById('calculator-display');
+    display.value = '';
+}
 
 function initializeMusicPlayer() {
     const musicContainer = document.createElement('div');
@@ -393,3 +508,101 @@ document.querySelectorAll('.app').forEach(app => {
         if (appId == "music") initializeMusicPlayer();
     });
 });
+
+function typeDialogue(dialogues) {
+    const dialogueBox = document.createElement('div');
+    const characterImage = document.createElement('img');
+
+    dialogueBox.style.position = 'fixed';
+    dialogueBox.style.bottom = '20px';
+    dialogueBox.style.left = '50%';
+    dialogueBox.style.transform = 'translateX(-50%)';
+    dialogueBox.style.border = '3px solid purple';
+    dialogueBox.style.padding = '20px';
+    dialogueBox.style.width = '80%';
+    dialogueBox.style.fontSize= "16px";
+    dialogueBox.style.height = '150px';
+    dialogueBox.style.backgroundColor = 'black';
+    dialogueBox.style.color = 'transparent';
+    dialogueBox.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.5)';
+    dialogueBox.style.zIndex = '1000';
+    dialogueBox.style.display = 'flex';
+    
+    dialogueBox.style.alignItems = 'flex-start';
+    dialogueBox.style.justifyContent = 'space-between';
+    document.body.appendChild(dialogueBox);
+
+    const textSpan = document.createElement('span');
+    textSpan.style.color = 'white';
+    dialogueBox.appendChild(textSpan);
+
+    characterImage.style.width = '120px';
+    characterImage.style.marginLeft = '10px';
+    characterImage.style.marginRight = '10px';
+    characterImage.style.zIndex = '1000';
+    dialogueBox.appendChild(characterImage);
+
+    let currentDialogueIndex = 0;
+    let typingInterval;
+
+    function displayNextSentence() {
+        if (currentDialogueIndex < dialogues.length) {
+            const { image, speed, content } = dialogues[currentDialogueIndex];
+
+            characterImage.src = image;
+            typeOutText(content, speed);
+        } else {
+            cleanup();
+        }
+    }
+
+    function typeOutText(text, speed) {
+        textSpan.innerHTML = '';
+        let index = 0;
+
+        typingInterval = setInterval(() => {
+            if (index < text.length) {
+                textSpan.innerHTML += text.charAt(index);
+                index++;
+            } else {
+                clearInterval(typingInterval);
+                currentDialogueIndex++;
+                setTimeout(displayNextSentence, 1000);
+            }
+        }, 1000 / speed);
+    }
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'z' || event.key === 'Z') {
+            if (textSpan.innerHTML.length > 0) {
+                clearInterval(typingInterval);
+                currentDialogueIndex++;
+                textSpan.innerHTML = '';
+                setTimeout(displayNextSentence, 200);
+            } else {
+                displayNextSentence();
+            }
+        }
+    });
+
+    function cleanup() {
+        document.body.removeChild(dialogueBox);
+    }
+
+    displayNextSentence();
+}
+
+const dialogues = [
+    {
+        image: "./sprites/happy.webp",
+        speed: 25,
+        content: "Hello there! Welcome to my sandbox."
+    },
+    {
+        image: "./sprites/neutral.webp",
+        speed: 25,
+        content: "You may explore it for now"
+    }
+];
+
+typeDialogue(dialogues);
